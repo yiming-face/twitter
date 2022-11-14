@@ -2,7 +2,7 @@
   "version" : "2018-05-29",
   "operation" : "UpdateItem",
   "key": {
-      "id" : $util.dynamodb.toDynamoDBJson($context.identity.username)
+      "id" : $util.dynamodb.toDynamoDBJson($context.identity.resolverContext.username)
   },
   "update" : {
     "expression" : "set #name = :name, imageUrl = :imageUrl, backgroundImageUrl = :backgroundImageUrl, bio = :bio, #location = :location, website = :website, birthdate = :birthdate",

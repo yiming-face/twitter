@@ -7,7 +7,7 @@
   #foreach ($id in $context.source.inReplyToUserIds)
     #set ($user = { "id": "$id" })
 
-    #if ($id == $context.identity.username)
+    #if ($id == $context.identity.resolverContext.username)
       #set ($user["__typename"] = "MyProfile")
     #else
       #set ($user["__typename"] = "OtherProfile")

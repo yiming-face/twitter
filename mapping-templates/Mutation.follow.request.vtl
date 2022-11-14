@@ -8,7 +8,7 @@
       "table": "${RelationshipsTable}",
       "operation": "PutItem",
       "key": {
-        "userId": $util.dynamodb.toDynamoDBJson($context.identity.username),
+        "userId": $util.dynamodb.toDynamoDBJson($context.identity.resolverContext.username),
         "sk": $util.dynamodb.toDynamoDBJson($sk)
       },
       "attributeValues": {
@@ -23,7 +23,7 @@
       "table":"${UsersTable}",
       "operation": "UpdateItem",
       "key": {
-        "id": $util.dynamodb.toDynamoDBJson($context.identity.username)
+        "id": $util.dynamodb.toDynamoDBJson($context.identity.resolverContext.username)
       },
       "update": {
         "expression": "ADD followingCount :one",

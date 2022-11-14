@@ -4,7 +4,7 @@
   "version" : "2018-05-29",
   "operation" : "GetItem",
   "key" : {
-    "userId" : $util.dynamodb.toDynamoDBJson($context.identity.username),
+    "userId" : $util.dynamodb.toDynamoDBJson($context.identity.resolverContext.username),
     "sk" : $util.dynamodb.toDynamoDBJson($sk)
   }
 }

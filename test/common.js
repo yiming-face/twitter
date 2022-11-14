@@ -10,17 +10,32 @@ if (!AWS.config.region) {
     });
 }
 
+process.env['DEP_ENV'] = 'prod';
+
 const init_common_env = () => {
-    process.env['AWS_REGION'] = 'us-east-1';
-    process.env['FIELD_LOG_LEVEL'] = 'ERROR';
-    process.env['APPSYNC_API_ID'] = 'qwptwetsmjbbhhetwywaopy3om';
-    process.env['GRAPHQL_API_URL'] = 'https://cdgpi6dwgnfjbkvm2dftzm2vre.appsync-api.us-east-1.amazonaws.com/graphql';
-    process.env['API_URL'] = process.env.GRAPHQL_API_URL;
-    process.env['COGNITO_USER_POOL_ID'] = 'us-east-1_FLEjUkAVd';
-    process.env['WEB_COGNITO_USER_POOL_CLIENT_ID'] = '271nhoi8urg0nu280012rvmuug';
-    process.env['USERS_TABLE'] = 'twitter-dev-UsersTable-2QQ76ZFVEJ04';
-    process.env['TWEETS_TABLE'] = 'twitter-dev-TweetsTable-1KN7I690E0QV8';
-    process.env['TIMELINES_TABLE'] = 'twitter-dev-TimelinesTable-AX9IVG4IDOPG';
+    if (process.env.DEP_ENV === 'dev') {
+        process.env['AWS_REGION'] = 'us-east-1';
+        process.env['FIELD_LOG_LEVEL'] = 'ERROR';
+        process.env['APPSYNC_API_ID'] = 'qwptwetsmjbbhhetwywaopy3om';
+        process.env['GRAPHQL_API_URL'] = 'https://cdgpi6dwgnfjbkvm2dftzm2vre.appsync-api.us-east-1.amazonaws.com/graphql';
+        process.env['API_URL'] = process.env.GRAPHQL_API_URL;
+        process.env['COGNITO_USER_POOL_ID'] = 'us-east-1_FLEjUkAVd';
+        process.env['WEB_COGNITO_USER_POOL_CLIENT_ID'] = '271nhoi8urg0nu280012rvmuug';
+        process.env['USERS_TABLE'] = 'twitter-dev-UsersTable-2QQ76ZFVEJ04';
+        process.env['TWEETS_TABLE'] = 'twitter-dev-TweetsTable-1KN7I690E0QV8';
+        process.env['TIMELINES_TABLE'] = 'twitter-dev-TimelinesTable-AX9IVG4IDOPG';
+    } else if (process.env.DEP_ENV === 'prod') {
+        process.env['AWS_REGION'] = 'us-east-1';
+        process.env['FIELD_LOG_LEVEL'] = 'ERROR';
+        process.env['APPSYNC_API_ID'] = '2lsiewvdy5hy7pw3spczrtxjqm';
+        process.env['GRAPHQL_API_URL'] = 'https://qevrrv7ghzd6dnecvqhui3odde.appsync-api.us-east-1.amazonaws.com/graphql';
+        process.env['API_URL'] = process.env.GRAPHQL_API_URL;
+        process.env['COGNITO_USER_POOL_ID'] = 'us-east-1_zTbHAWW0E';
+        process.env['WEB_COGNITO_USER_POOL_CLIENT_ID'] = '1norsk3k2q2v6j0o82n8us94rf';
+        process.env['USERS_TABLE'] = 'twitter-prod-UsersTable-XLTXXPBRQN6Q';
+        process.env['TWEETS_TABLE'] = 'twitter-prod-TweetsTable-1WRZXL57XZLHL';
+        process.env['TIMELINES_TABLE'] = 'twitter-prod-TimelinesTable-YI5QXJS2E4LH';
+    }
 };
 
 init_common_env();
@@ -113,9 +128,9 @@ error: ${JSON.stringify(errors, null, 2)}
 `;
         throw new Error(errorMessage);
     }
-}
+};
 
-function* findUsedFragments (query, usedFragments = new Set()) {
+function* findUsedFragments(query, usedFragments = new Set()) {
     for (const name of Object.keys(fragments)) {
         if (query.includes(name) && !usedFragments.has(name)) {
             usedFragments.add(name);
@@ -150,13 +165,13 @@ const GraphQL = async (url, query, variables = {}, auth) => {
             headers,
             data: {
                 query: [query, ...usedFragments].join('\n'),
-                variables: JSON.stringify(variables),
-            },
+                variables: JSON.stringify(variables)
+            }
         };
         l.i('opts:', opts);
         const resp = await http(opts);
 
-        const { data, errors } = resp.data;
+        const {data, errors} = resp.data;
         throwOnErrors({query, variables, errors});
         return data;
     } catch (error) {
@@ -164,7 +179,7 @@ const GraphQL = async (url, query, variables = {}, auth) => {
         throwOnErrors({query, variables, errors});
         throw error;
     }
-}
+};
 
 const a_random_user = () => {
     const firstName = chance.first({nationality: 'en'});
@@ -231,7 +246,7 @@ const dev_authenticated_user = async () => {
     const email = 'test@facedao.pro';
     const cognito = new AWS.CognitoIdentityServiceProvider();
 
-    const username = 'fa9fb464-c60d-4eef-90e8-b81685d600fb';
+    const username = process.env.DEP_ENV === 'prod' ? 'c0e2ddd6-488d-4d57-b612-0f593b28d77e' : 'fa9fb464-c60d-4eef-90e8-b81685d600fb';
     const userPoolId = process.env.COGNITO_USER_POOL_ID;
     const clientId = process.env.WEB_COGNITO_USER_POOL_CLIENT_ID;
 

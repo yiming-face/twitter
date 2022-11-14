@@ -1,11 +1,14 @@
 name: twitter
 schema: schema.api.graphql
 caching: ${self:custom.appSyncCaching}
-authenticationType: AMAZON_COGNITO_USER_POOLS
-userPoolConfig:
-  awsRegion: us-east-1
-  defaultAction: ALLOW
-  userPoolId: !Ref CognitoUserPool
+authenticationType: AWS_LAMBDA
+lambdaAuthorizerConfig:
+  functionName: appsyncAuthorizer
+  functionAlias: appsyncAuthorizer
+  # Circular dependency here, manually set the correct appsyncAuthorizer ARN after bring up
+  # lambdaFunctionArn: !GetAtt appsyncAuthorizer.Arn
+  lambdaFunctionArn: arn:aws:lambda:us-east-1:725294571591:function:twitter-placeholder
+  authorizerResultTtlInSeconds: 300
 logConfig:
   loggingRoleArn: !GetAtt AppSyncLoggingServiceRole.Arn
   level: ${self:custom.appSyncLogLevel}
@@ -147,7 +150,7 @@ mappingTemplates:
     response: Tweet.profile.batchInvoke.response.vtl
     caching:
       keys:
-        - $context.identity.username
+        - $context.identity.resolverContext.username
         - $context.source.creator
       ttl: 300 # 5 minutes in seconds
   - type: Retweet
@@ -157,7 +160,7 @@ mappingTemplates:
     response: Tweet.profile.batchInvoke.response.vtl
     caching:
       keys:
-        - $context.identity.username
+        - $context.identity.resolverContext.username
         - $context.source.creator
       ttl: 300 # 5 minutes in seconds
   - type: Reply
@@ -167,7 +170,7 @@ mappingTemplates:
     response: Tweet.profile.batchInvoke.response.vtl
     caching:
       keys:
-        - $context.identity.username
+        - $context.identity.resolverContext.username
         - $context.source.creator
       ttl: 300 # 5 minutes in seconds
   - type: Tweet
@@ -197,7 +200,7 @@ mappingTemplates:
     dataSource: usersTable
     caching:
       keys:
-        - $context.identity.username
+        - $context.identity.resolverContext.username
         - $context.source.inReplyToUserIds
       ttl: 300 # 5 minutes in seconds
   - type: UnhydratedTweetsPage

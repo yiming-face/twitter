@@ -47,7 +47,7 @@ type Query {
   ): MessagesPage!
 
   getAnalyticsConfig: AnalyticsConfig
-  @aws_iam @aws_cognito_user_pools
+  @aws_iam @aws_lambda
 }
 
 type Mutation {
@@ -272,7 +272,7 @@ type HashTagResultsPage {
   nextToken: String
 }
 
-type Retweeted implements iNotification @aws_iam @aws_cognito_user_pools {
+type Retweeted implements iNotification @aws_iam @aws_lambda {
   id: ID!
   type: NotificationType!
   userId: ID!
@@ -282,7 +282,7 @@ type Retweeted implements iNotification @aws_iam @aws_cognito_user_pools {
   createdAt: AWSDateTime!
 }
 
-type Liked implements iNotification @aws_iam @aws_cognito_user_pools {
+type Liked implements iNotification @aws_iam @aws_lambda {
   id: ID!
   type: NotificationType!
   userId: ID!
@@ -291,7 +291,7 @@ type Liked implements iNotification @aws_iam @aws_cognito_user_pools {
   createdAt: AWSDateTime!
 }
 
-type Mentioned implements iNotification @aws_iam @aws_cognito_user_pools {
+type Mentioned implements iNotification @aws_iam @aws_lambda {
   id: ID!
   type: NotificationType!
   userId: ID!
@@ -300,7 +300,7 @@ type Mentioned implements iNotification @aws_iam @aws_cognito_user_pools {
   createdAt: AWSDateTime!
 }
 
-type Replied implements iNotification @aws_iam @aws_cognito_user_pools {
+type Replied implements iNotification @aws_iam @aws_lambda {
   id: ID!
   type: NotificationType!
   userId: ID!
@@ -310,7 +310,7 @@ type Replied implements iNotification @aws_iam @aws_cognito_user_pools {
   createdAt: AWSDateTime!
 }
 
-type DMed implements iNotification @aws_iam @aws_cognito_user_pools {
+type DMed implements iNotification @aws_iam @aws_lambda {
   id: ID!
   type: NotificationType!
   userId: ID!
@@ -319,9 +319,9 @@ type DMed implements iNotification @aws_iam @aws_cognito_user_pools {
   createdAt: AWSDateTime!
 }
 
-union Notification @aws_iam @aws_cognito_user_pools = Retweeted | Liked | Mentioned | Replied | DMed
+union Notification @aws_iam @aws_lambda = Retweeted | Liked | Mentioned | Replied | DMed
 
-interface iNotification @aws_iam @aws_cognito_user_pools {
+interface iNotification @aws_iam @aws_lambda {
   id: ID!
   type: NotificationType!
   userId: ID!
@@ -360,7 +360,7 @@ type MessagesPage {
   nextToken: String
 }
 
-type AnalyticsConfig @aws_iam @aws_cognito_user_pools {
+type AnalyticsConfig @aws_iam @aws_lambda {
   identityPoolId: ID!
   streamName: String!
 }

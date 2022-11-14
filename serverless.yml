@@ -362,6 +362,24 @@ functions:
         Action: iam:PassRole
         Resource: !GetAtt AppSyncLoggingServiceRole.Arn
 
+  magicAuth:
+    handler: functions/magic-auth.handler
+    environment:
+      MAGIC_PUB_KEY: ${ssm:/${sls:stage}/magic/pub-key}
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:PutItem
+        Resource: !GetAtt UsersTable.Arn
+
+  appsyncAuthorizer:
+    handler: functions/appsync-authorizer.handler
+    environment:
+      MAGIC_PUB_KEY: TODO
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:PutItem
+        Resource: !GetAtt UsersTable.Arn
+
 resources:
   Resources:
     # DynamoDB

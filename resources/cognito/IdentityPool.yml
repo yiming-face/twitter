@@ -1,6 +1,7 @@
 IdentityPool:
   Type: AWS::Cognito::IdentityPool
   Properties:
+    IdentityPoolName: ${sls:stage}-twitter-identity-pool
     AllowUnauthenticatedIdentities: true
     AllowClassicFlow: false
     CognitoIdentityProviders:

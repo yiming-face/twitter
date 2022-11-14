@@ -6,7 +6,7 @@
       "table": "${LikesTable}",
       "operation": "DeleteItem",
       "key": {
-        "userId": $util.dynamodb.toDynamoDBJson($context.identity.username),
+        "userId": $util.dynamodb.toDynamoDBJson($context.identity.resolverContext.username),
         "tweetId": $util.dynamodb.toDynamoDBJson($context.arguments.tweetId)
       },
       "condition": {
@@ -33,7 +33,7 @@
       "table": "${UsersTable}",
       "operation": "UpdateItem",
       "key": {
-        "id": $util.dynamodb.toDynamoDBJson($context.identity.username)
+        "id": $util.dynamodb.toDynamoDBJson($context.identity.resolverContext.username)
       },
       "update": {
           "expression": "ADD likesCount :one",

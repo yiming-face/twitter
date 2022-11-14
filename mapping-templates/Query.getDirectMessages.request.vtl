@@ -1,7 +1,7 @@
 #set ($isValidLimit = $context.arguments.limit <= 25)
 $util.validate($isValidLimit, "max limit is 25")
 
-#set ($userId = $context.identity.username)
+#set ($userId = $context.identity.resolverContext.username)
 #set ($otherUserId = $context.arguments.otherUserId)
 
 #if ($userId.compareTo($otherUserId) < 0)

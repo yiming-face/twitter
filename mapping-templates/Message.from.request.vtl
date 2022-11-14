@@ -1,7 +1,7 @@
 #if ($context.info.selectionSetList.size() == 1 && $context.info.selectionSetList[0] == "id")
   #set ($result = { "id": "$context.source.from" })
 
-  #if ($context.source.from == $context.identity.username)
+  #if ($context.source.from == $context.identity.resolverContext.username)
     #set ($result["__typename"] = "MyProfile")
   #else
     #set ($result["__typename"] = "OtherProfile")

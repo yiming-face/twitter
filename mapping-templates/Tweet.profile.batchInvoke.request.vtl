@@ -3,7 +3,7 @@
   "operation": "BatchInvoke",
   "payload": {
     "userId": $utils.toJson($context.source.creator),
-    "caller": $utils.toJson($context.identity.username),
+    "caller": $utils.toJson($context.identity.resolverContext.username),
     "selection": $utils.toJson($context.info.selectionSetList)
   }
 }
