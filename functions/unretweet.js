@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const DynamoDB = require('aws-sdk/clients/dynamodb');
+const l = require('../lib/log');
+
 const DocumentClient = new DynamoDB.DocumentClient();
 
 const {
@@ -10,8 +12,10 @@ const {
 } = process.env;
 
 module.exports.handler = async (event) => {
+  l.i('>>> REQ <<<', event);
+
   const { tweetId } = event.arguments;
-  const { username } = event.identity;
+  const { username } = event.identity.resolverContext;
 
   const getTweetResponse = await DocumentClient.get({
     TableName: TWEETS_TABLE,

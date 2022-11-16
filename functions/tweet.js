@@ -3,12 +3,14 @@ const DocumentClient = new DynamoDB.DocumentClient();
 const ulid = require('ulid');
 const { TweetTypes } = require('../lib/constants');
 const { extractHashTags } = require('../lib/tweets');
+const l = require('../lib/log');
 
 const { USERS_TABLE, TWEETS_TABLE, TIMELINES_TABLE } = process.env;
 
 module.exports.handler = async (event) => {
+  l.i('>>> REQ <<<', event);
   const { text } = event.arguments;
-  const { username } = event.identity;
+  const { username } = event.identity.resolverContext;
   const id = ulid.ulid();
   const timestamp = new Date().toJSON();
   const hashTags = extractHashTags(text);
@@ -24,6 +26,8 @@ module.exports.handler = async (event) => {
     retweets: 0,
     hashTags,
   };
+
+  l.i('new tweet:', newTweet);
 
   await DocumentClient.transactWrite({
     TransactItems: [{
@@ -55,5 +59,6 @@ module.exports.handler = async (event) => {
     }]
   }).promise();
 
+  l.i('>>> RSP <<<', newTweet);
   return newTweet;
 };

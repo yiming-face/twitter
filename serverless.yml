@@ -365,19 +365,23 @@ functions:
   magicAuth:
     handler: functions/magic-auth.handler
     environment:
+      USERS_TABLE: !Ref UsersTable
       MAGIC_PUB_KEY: ${ssm:/${sls:stage}/magic/pub-key}
+      MAGIC_SEC_KEY: ${ssm:/${sls:stage}/magic/secret-key}
     iamRoleStatements:
       - Effect: Allow
-        Action: dynamodb:PutItem
+        Action: dynamodb:*
         Resource: !GetAtt UsersTable.Arn
 
   appsyncAuthorizer:
     handler: functions/appsync-authorizer.handler
     environment:
-      MAGIC_PUB_KEY: TODO
+      USERS_TABLE: !Ref UsersTable
+      MAGIC_PUB_KEY: ${ssm:/${sls:stage}/magic/pub-key}
+      MAGIC_SEC_KEY: ${ssm:/${sls:stage}/magic/secret-key}
     iamRoleStatements:
       - Effect: Allow
-        Action: dynamodb:PutItem
+        Action: dynamodb:*
         Resource: !GetAtt UsersTable.Arn
 
 resources:

@@ -2,6 +2,7 @@ const DynamoDB = require('aws-sdk/clients/dynamodb');
 const DocumentClient = new DynamoDB.DocumentClient();
 const ulid = require('ulid');
 const { TweetTypes } = require('../lib/constants');
+const l = require('../lib/log');
 
 const {
   USERS_TABLE,
@@ -11,8 +12,10 @@ const {
 } = process.env;
 
 module.exports.handler = async (event) => {
+  l.i('>>> REQ <<<', event);
+
   const { tweetId } = event.arguments;
-  const { username } = event.identity;
+  const { username } = event.identity.resolverContext;
   const id = ulid.ulid();
   const timestamp = new Date().toJSON();
 
@@ -102,6 +105,8 @@ module.exports.handler = async (event) => {
   await DocumentClient.transactWrite({
     TransactItems: transactItems 
   }).promise();
+
+  l.i('>>> RSP <<<', newRetweet);
 
   return newRetweet;
 };

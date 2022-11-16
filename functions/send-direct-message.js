@@ -1,12 +1,15 @@
 const DynamoDB = require('aws-sdk/clients/dynamodb');
 const DocumentClient = new DynamoDB.DocumentClient();
 const ulid = require('ulid');
+const l = require('../lib/log');
 
 const { CONVERSATIONS_TABLE, DIRECT_MESSAGES_TABLE } = process.env;
 
 module.exports.handler = async (event) => {
+  l.i('>>> REQ <<<', event);
+
   const { otherUserId, message } = event.arguments;
-  const { username } = event.identity;
+  const { username } = event.identity.resolverContext;
   const timestamp = new Date().toJSON();
 
   const conversationId = username < otherUserId
@@ -56,10 +59,14 @@ module.exports.handler = async (event) => {
     }]
   }).promise();
 
-  return {
+
+  let rsp = {
     id: conversationId,
     otherUserId,
     lastMessage: message,
     lastModified: timestamp,
   };
+  l.i('>>> RSP <<<', rsp);
+
+  return rsp;
 };
