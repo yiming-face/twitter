@@ -368,6 +368,8 @@ functions:
       USERS_TABLE: !Ref UsersTable
       MAGIC_PUB_KEY: ${ssm:/${sls:stage}/magic/pub-key}
       MAGIC_SEC_KEY: ${ssm:/${sls:stage}/magic/secret-key}
+      JWT_PUBLIC_KEY: ${ssm:/${sls:stage}/jwt/pub-key}
+      JWT_PRIVATE_KEY: ${ssm:/${sls:stage}/jwt/priv-key}
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:*
@@ -379,6 +381,8 @@ functions:
       USERS_TABLE: !Ref UsersTable
       MAGIC_PUB_KEY: ${ssm:/${sls:stage}/magic/pub-key}
       MAGIC_SEC_KEY: ${ssm:/${sls:stage}/magic/secret-key}
+      JWT_PUBLIC_KEY: ${ssm:/${sls:stage}/jwt/pub-key}
+      JWT_PRIVATE_KEY: ${ssm:/${sls:stage}/jwt/priv-key}
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:*

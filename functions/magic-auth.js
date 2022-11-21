@@ -2,6 +2,9 @@ const AWS = require('aws-sdk');
 const {Magic} = require('@magic-sdk/admin');
 const l = require('../lib/log');
 const ddb = require('../lib/ddb');
+const {Code} = require('../lib/code');
+const {Result} = require('../lib/result');
+const jwt = require('../lib/jwt');
 
 const {MAGIC_SEC_KEY} = process.env;
 
@@ -13,11 +16,7 @@ exports.handler = async (event) => {
 
   const magic = new Magic(MAGIC_SEC_KEY);
 
-  let rsp = {
-    code: 1,
-    message: 'Unknown error',
-    data: {}
-  };
+  let rsp = Result.error(Code.InvalidToken);
 
   do {
     try {
@@ -27,20 +26,19 @@ exports.handler = async (event) => {
       l.i('meta:', metadata);
 
       if (!metadata || metadata.email !== email) {
+        rsp = Result.error(Code.EmailUnmatch);
         l.e('email not match:', metadata.email, email);
         break;
       }
 
       let user = await ddb.getUserByEmail(email);
       if (!user) {
-        await ddb.createUser(email);
+        user = await ddb.createUser(email);
       }
 
-      rsp = {
-        code: 1000,
-        message: 'OK',
-        data: {}
-      };
+      let token = await jwt.sign({userId: user.id});
+
+      rsp = Result.success({...user, token});
     } catch (error) {
       l.e(error.message);
       break;
