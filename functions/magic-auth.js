@@ -5,6 +5,7 @@ const ddb = require('../lib/ddb');
 const {Code} = require('../lib/code');
 const {Result} = require('../lib/result');
 const jwt = require('../lib/jwt');
+const helpers = require('../lib/helpers');
 
 const {MAGIC_SEC_KEY} = process.env;
 
@@ -34,6 +35,16 @@ exports.handler = async (event) => {
       let user = await ddb.getUserByEmail(email);
       if (!user) {
         user = await ddb.createUser(email);
+      }
+
+      // Fix user profile
+      {
+        if (!user.userName) {
+          user.userName = helpers.genUserName();
+          user.nickName = user.userName;
+
+          ddb.updateUser(user.id, user);
+        }
       }
 
       let token = await jwt.sign({userId: user.id});
